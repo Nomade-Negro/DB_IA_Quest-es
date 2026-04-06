@@ -2,14 +2,14 @@ import { ensureSchema, withTransaction } from '../../lib/db.js';
 import { normalizeQuestion, validateBulkQuestions } from '../../lib/questions.js';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ error: `Método ${req.method} não permitido.` });
-  }
-
-  await ensureSchema();
-
   try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', ['POST']);
+      return res.status(405).json({ error: `Método ${req.method} não permitido.` });
+    }
+
+    await ensureSchema();
+
     const errors = validateBulkQuestions(req.body);
     if (errors.length > 0) {
       return res.status(400).json({
@@ -52,6 +52,9 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Erro na API /api/questions/bulk:', error);
-    return res.status(500).json({ error: 'Erro interno do servidor.' });
+    return res.status(500).json({
+      error: 'Erro interno do servidor.',
+      details: [error instanceof Error ? error.message : 'Falha inesperada ao importar questões.']
+    });
   }
 }

@@ -80,12 +80,21 @@ async function deleteQuestion(req, res) {
   return res.status(204).end();
 }
 
+function sendJsonError(res, status, message, details) {
+  const payload = { error: message };
+  if (details) {
+    payload.details = details;
+  }
+
+  return res.status(status).json(payload);
+}
+
 export { listQuestions, createQuestion, updateQuestion, deleteQuestion };
 
 export default async function handler(req, res) {
-  await ensureSchema();
-
   try {
+    await ensureSchema();
+
     switch (req.method) {
       case 'GET':
         return await listQuestions(res);
@@ -97,10 +106,12 @@ export default async function handler(req, res) {
         return await deleteQuestion(req, res);
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-        return res.status(405).json({ error: `Método ${req.method} não permitido.` });
+        return sendJsonError(res, 405, `Método ${req.method} não permitido.`);
     }
   } catch (error) {
     console.error('Erro na API /api/questions:', error);
-    return res.status(500).json({ error: 'Erro interno do servidor.' });
+    return sendJsonError(res, 500, 'Erro interno do servidor.', [
+      error instanceof Error ? error.message : 'Falha inesperada ao processar a requisição.'
+    ]);
   }
 }
