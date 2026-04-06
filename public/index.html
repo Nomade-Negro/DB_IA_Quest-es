@@ -14,9 +14,6 @@
   <link rel="manifest" href="/favicon_io%20(1)/site.webmanifest">
 
   <style>
-    /* ============================================================
-       CSS — BANCO DE QUESTÕES IA
-       ============================================================ */
     :root {
       --bg: #f0f2f5;
       --card: #ffffff;
@@ -35,7 +32,7 @@
       --gray-light: #eceff1;
       --text: #212121;
       --text-secondary: #546e7a;
-      --sidebar-w: 280px;
+      --sidebar-w: 300px;
       --header-h: 70px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,7 +43,6 @@
       color: var(--text);
       line-height: 1.6;
     }
-
     .header {
       position: sticky; top: 0; z-index: 200;
       background: linear-gradient(135deg, #0a1628 0%, #0b3d91 50%, #1976d2 100%);
@@ -89,12 +85,14 @@
     }
     .sidebar .filter-group { padding: 0 16px; margin-bottom: 20px; }
     .sidebar label { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 5px; font-weight: 600; }
-    .sidebar select, .sidebar input[type="text"] {
+    .sidebar select, .sidebar input[type="text"], .sidebar textarea {
       width: 100%; padding: 8px 10px; border: 1px solid #ddd;
       border-radius: 8px; font-size: 0.82rem; background: var(--gray-light);
       color: var(--text); outline: none; transition: border 0.2s;
+      font-family: inherit;
     }
-    .sidebar select:focus, .sidebar input:focus { border-color: var(--accent-light); }
+    .sidebar select:focus, .sidebar input:focus, .sidebar textarea:focus { border-color: var(--accent-light); }
+    .sidebar textarea { min-height: 220px; resize: vertical; font-family: Consolas, Monaco, monospace; line-height: 1.5; }
 
     .sidebar .actions { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .btn {
@@ -107,19 +105,36 @@
     .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(11,61,145,0.3); }
     .btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
     .btn-outline:hover { background: var(--accent-bg); }
-    .btn-success { background: var(--green); color: #fff; }
-    .btn-success:hover { background: #388e3c; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-danger:hover { background: #d32f2f; }
-    .btn-warning { background: var(--orange); color: #fff; }
-    .btn-warning:hover { background: #f57c00; }
     .btn-sm { padding: 7px 12px; font-size: 0.76rem; }
 
-    .sidebar .summary-box {
+    .hint-box, .summary-box, .feedback-box {
       margin: 20px 16px 0; padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #d0dbe8;
       background: linear-gradient(135deg, #e8eef6, #f3f7fd);
-      border-radius: 10px; border: 1px solid #d0dbe8;
     }
+    .hint-box pre {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow: auto;
+      font-size: 0.72rem;
+    }
+    .feedback-box.error {
+      background: linear-gradient(135deg, #ffebee, #fff3f3);
+      border-color: #ef9a9a;
+      color: #b71c1c;
+    }
+    .feedback-box.success {
+      background: linear-gradient(135deg, #e8f5e9, #f1fbf3);
+      border-color: #a5d6a7;
+      color: #1b5e20;
+    }
+    .feedback-box ul { margin-top: 8px; padding-left: 18px; }
     .summary-box h4 { font-size: 0.8rem; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
     .summary-box .stat-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 6px; }
     .summary-box .stat-row .label { color: var(--text-secondary); }
@@ -131,9 +146,8 @@
     .main {
       margin-left: var(--sidebar-w);
       padding: 28px 32px 60px;
-      max-width: 960px;
+      max-width: 1100px;
     }
-
     .status-bar {
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px;
@@ -156,7 +170,6 @@
     }
     .question-card.answered-correct { border-left-color: var(--green); }
     .question-card.answered-wrong { border-left-color: var(--red); }
-
     .q-header {
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 8px;
@@ -179,7 +192,6 @@
     .tag-medio { background: #fff8e1; color: #f57f17; }
     .tag-dificil { background: #fce4ec; color: #c62828; }
     .tag-fonte { background: #f3e5f5; color: #6a1b9a; }
-
     .q-body { padding: 20px; }
     .q-body .instrucao {
       font-size: 0.8rem; color: var(--text-secondary);
@@ -189,7 +201,6 @@
       font-size: 0.95rem; line-height: 1.7;
       color: var(--text);
     }
-
     .q-footer {
       padding: 14px 20px;
       display: flex; align-items: center; gap: 10px;
@@ -210,7 +221,6 @@
     .btn-answer:disabled:hover { border-color: #ddd; color: var(--text); background: #fff; }
     .btn-answer.selected-correct:disabled:hover { border-color: var(--green); background: var(--green-bg); color: var(--green); }
     .btn-answer.selected-wrong:disabled:hover { border-color: var(--red); background: var(--red-bg); color: var(--red); }
-
     .feedback {
       display: none; margin-top: 14px; padding: 14px 18px;
       border-radius: 8px; font-size: 0.85rem; line-height: 1.6;
@@ -219,21 +229,18 @@
     .feedback.correct { background: var(--green-bg); border: 1px solid #a5d6a7; color: #1b5e20; }
     .feedback.wrong { background: var(--red-bg); border: 1px solid #ef9a9a; color: #b71c1c; }
     .feedback strong { display: block; margin-bottom: 4px; }
-
     .empty-state {
       text-align: center; padding: 60px 20px;
       color: var(--text-secondary);
     }
     .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
     .empty-state h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
-
     .menu-toggle {
       display: none;
       background: none; border: none; color: #fff;
       font-size: 1.5rem; cursor: pointer;
     }
-
-    @media (max-width: 860px) {
+    @media (max-width: 980px) {
       .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
@@ -249,12 +256,10 @@
       }
       .overlay.show { display: block; }
     }
-
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #bbb; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #999; }
-
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
@@ -272,7 +277,7 @@
     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
     <span class="logo">📚</span>
     <h1>Banco de Questões IA</h1>
-    <span class="badge">Certo ou Errado</span>
+    <span class="badge">Importação em Massa</span>
   </div>
   <div class="header-right">
     <div class="stats-mini">
@@ -286,6 +291,41 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav class="sidebar" id="sidebar">
+  <h3>⬆️ Importação</h3>
+  <div class="filter-group">
+    <label for="bulkImport">Cole um array JSON válido</label>
+    <textarea id="bulkImport" placeholder='[
+  {
+    "disciplina": "Direito Penal",
+    "assunto": "Crimes contra a pessoa",
+    "dificuldade": "Médio",
+    "enunciado": "O homicídio culposo...",
+    "gabarito": "C",
+    "justificativa": "Porque o art. 121...",
+    "fonte": "CP, art. 121"
+  }
+]'></textarea>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" id="importButton">Importar questões</button>
+    <button class="btn btn-outline" id="clearImportButton">Limpar bloco</button>
+  </div>
+  <div class="feedback-box" id="importFeedback" style="display:none;"></div>
+  <div class="hint-box">
+    <strong>Formato aceito</strong>
+    <pre>[
+  {
+    "disciplina": "Direito Penal",
+    "assunto": "Crimes contra a pessoa",
+    "dificuldade": "Médio",
+    "enunciado": "...",
+    "gabarito": "C",
+    "justificativa": "...",
+    "fonte": "..."
+  }
+]</pre>
+  </div>
+
   <h3>🔍 Filtros</h3>
 
   <div class="filter-group">
@@ -357,9 +397,10 @@
 <main class="main">
   <div class="status-bar">
     <div class="info">
-      Exibindo <strong id="showCount">0</strong> de <strong id="totalCount">0</strong> questões
+      Exibindo <strong id="showCount">0</strong> de <strong id="totalCount">0</strong> questões salvas no banco
     </div>
     <div class="controls">
+      <button class="btn btn-outline btn-sm" onclick="loadQuestoes()">🔄 Atualizar</button>
       <button class="btn btn-outline btn-sm" onclick="shuffleAndRender()">🔀 Embaralhar</button>
       <button class="btn btn-outline btn-sm" onclick="renderQuestions()">📋 Ordem Original</button>
     </div>
@@ -368,40 +409,43 @@
   <div id="questionsContainer"></div>
 
   <div class="empty-state" id="emptyState" style="display:none;">
-    <div class="icon">🔍</div>
-    <h3>Nenhuma questão encontrada</h3>
-    <p>Tente mudar os filtros ou adicione novas questões ao banco.</p>
+    <div class="icon">🗂️</div>
+    <h3>Nenhuma questão cadastrada</h3>
+    <p>Cole um bloco JSON na lateral e importe para começar.</p>
   </div>
 </main>
 
 <script>
-const QUESTOES = [];
+const QUESTIONS = [];
 let isLoading = false;
 let currentOrder = [];
 let answers = {};
 let shuffled = false;
 
 loadProgress();
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('importButton').addEventListener('click', importQuestions);
+  document.getElementById('clearImportButton').addEventListener('click', () => {
+    document.getElementById('bulkImport').value = '';
+    hideImportFeedback();
+  });
   loadQuestoes();
 });
 
 async function loadQuestoes() {
   if (isLoading) return;
-
   isLoading = true;
   showLoading(true);
 
   try {
-    const response = await fetch('/api/questoes');
+    const response = await fetch('/api/questions');
     if (!response.ok) {
       throw new Error(`Erro HTTP: ${response.status}`);
     }
 
     const data = await response.json();
-    QUESTOES.length = 0;
-    QUESTOES.push(...data);
+    QUESTIONS.length = 0;
+    QUESTIONS.push(...data);
     populateFilters();
     renderQuestions();
   } catch (error) {
@@ -413,17 +457,70 @@ async function loadQuestoes() {
   }
 }
 
+async function importQuestions() {
+  const textarea = document.getElementById('bulkImport');
+  const raw = textarea.value.trim();
+
+  if (!raw) {
+    showImportFeedback('error', 'Cole um array JSON com uma ou mais questões antes de importar.');
+    return;
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    showImportFeedback('error', 'JSON inválido. Revise vírgulas, aspas duplas e colchetes do array.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/questions/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(parsed)
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      showImportFeedback('error', data.error || 'Falha ao importar questões.', data.details || []);
+      return;
+    }
+
+    textarea.value = '';
+    showImportFeedback('success', data.message || 'Questões importadas com sucesso.');
+    await loadQuestoes();
+  } catch (error) {
+    console.error('Erro ao importar questões:', error);
+    showImportFeedback('error', 'Erro de comunicação com a API. Tente novamente.');
+  }
+}
+
+function showImportFeedback(type, message, details = []) {
+  const box = document.getElementById('importFeedback');
+  box.className = `feedback-box ${type}`;
+  box.style.display = 'block';
+  box.innerHTML = `<strong>${escapeHtml(message)}</strong>${details.length ? `<ul>${details.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}`;
+}
+
+function hideImportFeedback() {
+  const box = document.getElementById('importFeedback');
+  box.style.display = 'none';
+  box.className = 'feedback-box';
+  box.innerHTML = '';
+}
+
 function showLoading(show) {
   if (!show) return;
-  const container = document.getElementById("questionsContainer");
-  const emptyState = document.getElementById("emptyState");
+  const container = document.getElementById('questionsContainer');
+  const emptyState = document.getElementById('emptyState');
   container.innerHTML = '<div style="text-align: center; padding: 40px;"><div>Carregando questões...</div></div>';
-  emptyState.style.display = "none";
+  emptyState.style.display = 'none';
 }
 
 function showError(message) {
-  const container = document.getElementById("questionsContainer");
-  container.innerHTML = `<div style="text-align: center; padding: 40px; color: #c62828;"><div>❌ ${message}</div><button onclick="loadQuestoes()" style="margin-top: 10px; padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">Tentar Novamente</button></div>`;
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = `<div style="text-align: center; padding: 40px; color: #c62828;"><div>❌ ${escapeHtml(message)}</div><button onclick="loadQuestoes()" style="margin-top: 10px; padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">Tentar Novamente</button></div>`;
 }
 
 function resetFilterSelect(id, placeholder) {
@@ -434,35 +531,35 @@ function resetFilterSelect(id, placeholder) {
 }
 
 function populateFilters() {
-  const disciplinas = [...new Set(QUESTOES.map(q => q.disciplina).filter(Boolean))].sort();
-  const assuntos = [...new Set(QUESTOES.map(q => q.assunto).filter(Boolean))].sort();
-  const fontes = [...new Set(QUESTOES.map(q => q.fonte).filter(Boolean))].sort();
+  const disciplinas = [...new Set(QUESTIONS.map(q => q.disciplina).filter(Boolean))].sort();
+  const assuntos = [...new Set(QUESTIONS.map(q => q.assunto).filter(Boolean))].sort();
+  const fontes = [...new Set(QUESTIONS.map(q => q.fonte).filter(Boolean))].sort();
 
-  const selectedDisc = resetFilterSelect("filtDisciplina", "Todas");
-  const selectedAss = resetFilterSelect("filtAssunto", "Todos");
-  const selectedFonte = resetFilterSelect("filtFonte", "Todas");
+  const selectedDisc = resetFilterSelect('filtDisciplina', 'Todas');
+  const selectedAss = resetFilterSelect('filtAssunto', 'Todos');
+  const selectedFonte = resetFilterSelect('filtFonte', 'Todas');
 
-  const selDisc = document.getElementById("filtDisciplina");
+  const selDisc = document.getElementById('filtDisciplina');
   disciplinas.forEach(d => {
-    const opt = document.createElement("option");
+    const opt = document.createElement('option');
     opt.value = d;
     opt.textContent = d;
     selDisc.appendChild(opt);
   });
 
-  const selAss = document.getElementById("filtAssunto");
+  const selAss = document.getElementById('filtAssunto');
   assuntos.forEach(a => {
-    const opt = document.createElement("option");
+    const opt = document.createElement('option');
     opt.value = a;
     opt.textContent = a;
     selAss.appendChild(opt);
   });
 
-  const selFonte = document.getElementById("filtFonte");
+  const selFonte = document.getElementById('filtFonte');
   fontes.forEach(f => {
-    const opt = document.createElement("option");
+    const opt = document.createElement('option');
     opt.value = f;
-    opt.textContent = f.length > 35 ? f.substring(0, 35) + "…" : f;
+    opt.textContent = f.length > 35 ? f.substring(0, 35) + '…' : f;
     selFonte.appendChild(opt);
   });
 
@@ -472,22 +569,22 @@ function populateFilters() {
 }
 
 function getFilteredIds() {
-  const disc = document.getElementById("filtDisciplina").value;
-  const ass = document.getElementById("filtAssunto").value;
-  const dif = document.getElementById("filtDificuldade").value;
-  const fnt = document.getElementById("filtFonte").value;
-  const sta = document.getElementById("filtStatus").value;
+  const disc = document.getElementById('filtDisciplina').value;
+  const ass = document.getElementById('filtAssunto').value;
+  const dif = document.getElementById('filtDificuldade').value;
+  const fnt = document.getElementById('filtFonte').value;
+  const sta = document.getElementById('filtStatus').value;
 
-  return QUESTOES.filter(q => {
+  return QUESTIONS.filter(q => {
     if (disc && q.disciplina !== disc) return false;
     if (ass && q.assunto !== ass) return false;
     if (dif && q.dificuldade !== dif) return false;
     if (fnt && q.fonte !== fnt) return false;
 
     const answer = answers[q.id];
-    if (sta === "pendente" && answer) return false;
-    if (sta === "correta" && (!answer || !answer.correto)) return false;
-    if (sta === "errada" && (!answer || answer.correto)) return false;
+    if (sta === 'pendente' && answer) return false;
+    if (sta === 'correta' && (!answer || !answer.correto)) return false;
+    if (sta === 'errada' && (!answer || answer.correto)) return false;
     return true;
   }).map(q => q.id);
 }
@@ -509,57 +606,57 @@ function shuffleAndRender() {
 }
 
 function render(ids) {
-  const container = document.getElementById("questionsContainer");
-  const emptyState = document.getElementById("emptyState");
+  const container = document.getElementById('questionsContainer');
+  const emptyState = document.getElementById('emptyState');
 
-  document.getElementById("showCount").textContent = ids.length;
-  document.getElementById("totalCount").textContent = QUESTOES.length;
+  document.getElementById('showCount').textContent = ids.length;
+  document.getElementById('totalCount').textContent = QUESTIONS.length;
 
   if (ids.length === 0) {
-    container.innerHTML = "";
-    emptyState.style.display = "block";
+    container.innerHTML = '';
+    emptyState.style.display = 'block';
     updateStats();
     return;
   }
-  emptyState.style.display = "none";
+  emptyState.style.display = 'none';
 
-  let html = "";
+  let html = '';
   ids.forEach((id, displayNum) => {
-    const q = QUESTOES.find(item => item.id === id);
+    const q = QUESTIONS.find(item => item.id === id);
     if (!q) return;
 
     const num = displayNum + 1;
     const ans = answers[id];
-    const cardClass = ans ? (ans.correto ? "answered-correct" : "answered-wrong") : "";
-    const disabled = ans ? "disabled" : "";
+    const cardClass = ans ? (ans.correto ? 'answered-correct' : 'answered-wrong') : '';
+    const disabled = ans ? 'disabled' : '';
 
-    let difClass = "tag-medio";
-    if (q.dificuldade === "Fácil") difClass = "tag-facil";
-    else if (q.dificuldade === "Difícil") difClass = "tag-dificil";
+    let difClass = 'tag-medio';
+    if (q.dificuldade === 'Fácil') difClass = 'tag-facil';
+    else if (q.dificuldade === 'Difícil') difClass = 'tag-dificil';
 
-    let feedbackHTML = "";
+    let feedbackHTML = '';
     if (ans) {
-      const fbClass = ans.correto ? "correct" : "wrong";
-      const fbIcon = ans.correto ? "✅" : "❌";
+      const fbClass = ans.correto ? 'correct' : 'wrong';
+      const fbIcon = ans.correto ? '✅' : '❌';
       feedbackHTML = `
         <div class="feedback show ${fbClass}">
-          <strong>${fbIcon} Gabarito: ${q.gabarito === "C" ? "CERTO" : "ERRADO"}</strong>
-          ${escapeHtml(q.justificativa || "")}
+          <strong>${fbIcon} Gabarito: ${q.gabarito === 'C' ? 'CERTO' : 'ERRADO'}</strong>
+          ${escapeHtml(q.justificativa || '')}
           ${q.fonte ? '<br><em style="font-size:0.78rem;opacity:0.8;">📖 ' + escapeHtml(q.fonte) + '</em>' : ''}
         </div>`;
     }
 
-    let btnCClass = "", btnEClass = "";
+    let btnCClass = '', btnEClass = '';
     if (ans) {
-      if (ans.escolha === "C") {
-        btnCClass = ans.correto ? "selected-correct" : "selected-wrong";
-      } else if (ans.escolha === "E") {
-        btnEClass = ans.correto ? "selected-correct" : "selected-wrong";
+      if (ans.escolha === 'C') {
+        btnCClass = ans.correto ? 'selected-correct' : 'selected-wrong';
+      } else if (ans.escolha === 'E') {
+        btnEClass = ans.correto ? 'selected-correct' : 'selected-wrong';
       }
 
       if (!ans.correto || ans.escolha === null) {
-        if (q.gabarito === "C") btnCClass += " selected-correct";
-        else btnEClass += " selected-correct";
+        if (q.gabarito === 'C') btnCClass += ' selected-correct';
+        else btnEClass += ' selected-correct';
       }
     }
 
@@ -592,7 +689,7 @@ function render(ids) {
 }
 
 function answer(id, escolha) {
-  const q = QUESTOES.find(item => item.id === id);
+  const q = QUESTIONS.find(item => item.id === id);
   if (!q) return;
 
   const correto = escolha === q.gabarito;
@@ -601,8 +698,8 @@ function answer(id, escolha) {
   render(currentOrder);
 
   setTimeout(() => {
-    const card = document.getElementById("card-" + id);
-    if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+    const card = document.getElementById('card-' + id);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 100);
 }
 
@@ -617,9 +714,9 @@ function revealAll() {
 }
 
 function resetAll() {
-  if (!confirm("Tem certeza que deseja reiniciar? Todo o progresso será perdido.")) return;
+  if (!confirm('Tem certeza que deseja reiniciar? Todo o progresso será perdido.')) return;
   answers = {};
-  localStorage.removeItem("bancoQuestoes_answers");
+  localStorage.removeItem('bancoQuestoes_answers');
   renderQuestions();
 }
 
@@ -629,20 +726,19 @@ function updateStats() {
   const wrong = total - correct;
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-  document.getElementById("hTotal").textContent = QUESTOES.length;
-  document.getElementById("hCorrect").textContent = correct;
-  document.getElementById("hRate").textContent = total > 0 ? pct + "%" : "—";
-
-  document.getElementById("sAnswered").textContent = total;
-  document.getElementById("sCorrect").textContent = correct;
-  document.getElementById("sWrong").textContent = wrong;
-  document.getElementById("sBar").style.width = pct + "%";
-  document.getElementById("sPct").textContent = total > 0 ? pct + "%" : "—";
+  document.getElementById('hTotal').textContent = QUESTIONS.length;
+  document.getElementById('hCorrect').textContent = correct;
+  document.getElementById('hRate').textContent = total > 0 ? pct + '%' : '—';
+  document.getElementById('sAnswered').textContent = total;
+  document.getElementById('sCorrect').textContent = correct;
+  document.getElementById('sWrong').textContent = wrong;
+  document.getElementById('sBar').style.width = pct + '%';
+  document.getElementById('sPct').textContent = total > 0 ? pct + '%' : '—';
 }
 
 function saveProgress() {
   try {
-    localStorage.setItem("bancoQuestoes_answers", JSON.stringify(answers));
+    localStorage.setItem('bancoQuestoes_answers', JSON.stringify(answers));
   } catch (error) {
     console.error('Erro ao salvar progresso:', error);
   }
@@ -650,7 +746,7 @@ function saveProgress() {
 
 function loadProgress() {
   try {
-    const saved = localStorage.getItem("bancoQuestoes_answers");
+    const saved = localStorage.getItem('bancoQuestoes_answers');
     if (saved) answers = JSON.parse(saved);
   } catch (error) {
     console.error('Erro ao carregar progresso:', error);
@@ -658,8 +754,8 @@ function loadProgress() {
 }
 
 function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("show");
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
 }
 
 function escapeHtml(value) {
