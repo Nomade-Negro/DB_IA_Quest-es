@@ -99,10 +99,23 @@ vercel login
 
 # Deploy
 vercel
+```
 
-# Adicionar variável de ambiente
+No painel da Vercel, adicione a variável de ambiente:
+
+- **Nome**: `DATABASE_URL`
+- **Valor**: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE`
+
+Se preferir via CLI:
+
+```bash
 vercel env add DATABASE_URL
 ```
+
+Importante:
+- Não use `@database_url`
+- Não configure `DATABASE_URL` dentro de `vercel.json`
+- Use apenas a variável de ambiente criada no painel da Vercel
 
 ### 3. Configurar Prisma
 
@@ -116,6 +129,9 @@ npx prisma db push
 npx vercel env pull .env.local
 node seed.js
 ```
+
+O projeto já está configurado para ler a conexão do PostgreSQL via `process.env.DATABASE_URL`.
+Na API serverless, o cliente Prisma é reutilizado com padrão compatível com Vercel para evitar múltiplas conexões desnecessárias durante o desenvolvimento e manter o deploy estável em produção.
 
 ## 📡 API Endpoints
 

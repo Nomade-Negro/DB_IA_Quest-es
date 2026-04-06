@@ -2,6 +2,7 @@
   "name": "banco-questoes-ia",
   "version": "1.0.0",
   "description": "Banco de Questões IA com backend PostgreSQL",
+  "type": "module",
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",

@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma.js';
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -87,7 +85,5 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Erro na API:', error);
     res.status(500).json({ error: 'Erro interno do servidor' });
-  } finally {
-    await prisma.$disconnect();
   }
 }
