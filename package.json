@@ -3,18 +3,17 @@
   "version": "1.0.0",
   "description": "Banco de Questões IA com backend PostgreSQL",
   "type": "module",
-  "main": "index.html",
+  "main": "public/index.html",
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'No build step required'",
-    "start": "vercel dev"
+    "start": "vercel dev",
+    "seed": "node seed.js"
   },
   "dependencies": {
-    "@prisma/client": "^5.0.0",
-    "@vercel/postgres": "^0.5.0"
+    "pg": "^8.13.1"
   },
   "devDependencies": {
-    "prisma": "^5.0.0",
     "vercel": "^32.0.0"
   },
   "keywords": ["questoes", "concursos", "ia", "postgresql"],

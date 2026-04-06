@@ -1,200 +1,77 @@
 # Banco de Questões IA
 
-Sistema de banco de questões para concursos públicos com frontend HTML/JS e backend PostgreSQL + API serverless.
+Aplicação fullstack com frontend estático em `public/`, API serverless em `api/` e persistência real no PostgreSQL via `DATABASE_URL`.
 
-## 🚀 Funcionalidades
+## Estrutura
 
-- ✅ Banco de questões Certo/Errado
-- 🔍 Filtros por disciplina, assunto, dificuldade e fonte
-- 📊 Estatísticas de desempenho
-- 💾 Persistência de respostas (localStorage)
-- 🔄 API REST completa (CRUD)
-- ☁️ Deploy serverless no Vercel
-
-## 🛠️ Tecnologias
-
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Backend**: Node.js + API Routes (Vercel)
-- **Banco**: PostgreSQL
-- **ORM**: Prisma
-- **Deploy**: Vercel
-
-## 📁 Estrutura do Projeto
-
-```
-/
-├── api/
-│   └── questoes.js          # API serverless (GET, POST, PUT, DELETE)
-├── prisma/
-│   └── schema.prisma        # Schema do banco de dados
-├── index.html               # Frontend principal
-├── package.json             # Dependências
-├── seed.js                  # Script para popular banco
-└── .env.example             # Exemplo de variáveis de ambiente
+```text
+/api
+  questoes.js    # CRUD serverless
+/lib
+  db.js          # Pool PostgreSQL + inicialização da tabela
+/public
+  index.html     # Interface web
 ```
 
-## ⚙️ Setup Local
+## Stack
 
-### 1. Pré-requisitos
+- Frontend: HTML, CSS e JavaScript vanilla
+- Backend: Node.js serverless na Vercel
+- Banco: PostgreSQL externo (Neon, Supabase, Railway, etc.)
+- Driver: `pg`
 
-- Node.js 18+
-- PostgreSQL
-- Conta no Vercel (opcional para deploy)
+## Variáveis de ambiente
 
-### 2. Instalação
+Crie a variável abaixo localmente e também no painel da Vercel:
 
-```bash
-# Clonar repositório
-git clone <url-do-repo>
-cd banco-questoes-ia
-
-# Instalar dependências
-npm install
-
-# Configurar banco de dados
-cp .env.example .env
-# Edite .env com suas credenciais PostgreSQL
-```
-
-### 3. Configurar Banco
-
-```bash
-# Gerar cliente Prisma
-npx prisma generate
-
-# Criar tabelas no banco
-npx prisma db push
-
-# Popular com questões iniciais
-node seed.js
-```
-
-### 4. Desenvolvimento Local
-
-```bash
-# Iniciar servidor de desenvolvimento
-npm run dev
-
-# Acesse http://localhost:3000
-```
-
-## 🚀 Deploy no Vercel
-
-### 1. Configurar PostgreSQL
-
-Use um provedor como:
-- Vercel Postgres
-- Neon
-- Supabase
-- Railway
-
-### 2. Deploy
-
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Fazer login
-vercel login
-
-# Deploy
-vercel
-```
-
-No painel da Vercel, adicione a variável de ambiente:
-
-- **Nome**: `DATABASE_URL`
-- **Valor**: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE`
-
-Se preferir via CLI:
-
-```bash
-vercel env add DATABASE_URL
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
 Importante:
 - Não use `@database_url`
-- Não configure `DATABASE_URL` dentro de `vercel.json`
-- Use apenas a variável de ambiente criada no painel da Vercel
+- Não configure `DATABASE_URL` no `vercel.json`
+- O projeto usa apenas `process.env.DATABASE_URL`
 
-### 3. Configurar Prisma
-
-Após deploy, execute:
+## Setup local
 
 ```bash
-# Conectar ao banco de produção
-npx prisma db push
-
-# Popular questões
-npx vercel env pull .env.local
-node seed.js
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-O projeto já está configurado para ler a conexão do PostgreSQL via `process.env.DATABASE_URL`.
-Na API serverless, o cliente Prisma é reutilizado com padrão compatível com Vercel para evitar múltiplas conexões desnecessárias durante o desenvolvimento e manter o deploy estável em produção.
+## Seed opcional
 
-## 📡 API Endpoints
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/questoes` | Listar todas as questões |
-| POST | `/api/questoes` | Criar nova questão |
-| PUT | `/api/questoes?id=1` | Atualizar questão |
-| DELETE | `/api/questoes?id=1` | Deletar questão |
-
-### Exemplo de Uso da API
-
-```javascript
-// Buscar questões
-const response = await fetch('/api/questoes');
-const questoes = await response.json();
-
-// Criar questão
-await fetch('/api/questoes', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    disciplina: 'Direito Penal',
-    assunto: 'Crimes contra pessoa',
-    dificuldade: 'Difícil',
-    enunciado: 'O homicídio culposo...',
-    gabarito: 'E',
-    justificativa: 'Porque...',
-    fonte: 'CP, art. 121'
-  })
-});
+```bash
+npm run seed
 ```
 
-## 🗄️ Modelo de Dados
+## API
 
-```sql
-CREATE TABLE questoes (
-  id SERIAL PRIMARY KEY,
-  disciplina TEXT NOT NULL,
-  assunto TEXT NOT NULL,
-  dificuldade TEXT NOT NULL,
-  enunciado TEXT NOT NULL,
-  gabarito CHAR(1) CHECK (gabarito IN ('C','E')),
-  justificativa TEXT,
-  fonte TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+- `GET /api/questoes`: lista as questões
+- `POST /api/questoes`: cria uma questão
+- `PUT /api/questoes?id=1`: atualiza uma questão
+- `DELETE /api/questoes?id=1`: remove uma questão
+
+Payload esperado para `POST` e `PUT`:
+
+```json
+{
+  "disciplina": "Direito Penal",
+  "assunto": "Crimes contra a pessoa",
+  "dificuldade": "Médio",
+  "enunciado": "O homicídio culposo...",
+  "gabarito": "E",
+  "justificativa": "Porque...",
+  "fonte": "CP, art. 121"
+}
 ```
 
-## 🔧 Desenvolvimento
+## Deploy na Vercel
 
-### Adicionar Novas Questões
+1. Faça o deploy do projeto.
+2. No painel da Vercel, adicione `DATABASE_URL` com a string do seu PostgreSQL.
+3. Redeploye o projeto.
 
-1. Via API (POST `/api/questoes`)
-2. Ou diretamente no banco
-3. Ou modificando `seed.js`
-
-### Personalização
-
-- **CSS**: Edite os estilos em `index.html`
-- **Funcionalidades**: Modifique o JavaScript em `index.html`
-- **API**: Edite `api/questoes.js`
-
-## 📝 Licença
-
-MIT
+A API cria a tabela `questoes` automaticamente se ela ainda não existir.

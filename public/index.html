@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco de Questões IA</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --panel: rgba(255, 252, 245, 0.92);
+      --panel-strong: #fffdf8;
+      --line: rgba(74, 58, 38, 0.14);
+      --ink: #1f1a14;
+      --muted: #66594a;
+      --brand: #8b3d2d;
+      --success: #2c7a4b;
+      --danger: #b63a2b;
+      --shadow: 0 24px 60px rgba(61, 39, 15, 0.14);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top left, rgba(210, 140, 53, 0.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(139, 61, 45, 0.14), transparent 24%),
+        linear-gradient(180deg, #fcfaf5 0%, #f0e6d5 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    .hero,
+    .layout,
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .hero { grid-template-columns: 1.2fr 0.8fr; margin-bottom: 24px; }
+    .layout { grid-template-columns: 360px 1fr; align-items: start; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .hero-card,
+    .stats-card,
+    .panel,
+    .question-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card,
+    .stats-card,
+    .panel,
+    .question-card { padding: 24px; }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(139, 61, 45, 0.08);
+      color: var(--brand);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 16px 0 10px;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 0.95;
+    }
+
+    h2,
+    h3 { margin: 0 0 16px; }
+
+    p,
+    .subtle,
+    label,
+    .status {
+      color: var(--muted);
+    }
+
+    .stats-card { display: grid; gap: 14px; align-content: center; }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.98rem;
+    }
+
+    label { display: grid; gap: 6px; font-size: 0.9rem; }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(74, 58, 38, 0.18);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    .actions,
+    .toolbar,
+    .question-actions,
+    .answer-actions,
+    .filters,
+    .list,
+    .question-top,
+    .tags { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .filters,
+    .list { display: grid; }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font: inherit;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .primary { background: linear-gradient(135deg, var(--brand), #6f2719); color: #fff7f1; }
+    .secondary { background: rgba(139, 61, 45, 0.08); color: var(--brand); }
+    .danger { background: rgba(182, 58, 43, 0.12); color: var(--danger); }
+    .answer { background: #fff; border: 1px solid var(--line); }
+    .status { min-height: 24px; margin-top: 10px; font-size: 0.92rem; }
+    .list { gap: 16px; }
+    .question-top { justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .tag { padding: 5px 10px; border-radius: 999px; background: rgba(210, 140, 53, 0.14); color: #7d4c12; font-size: 0.82rem; }
+    .feedback { margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(44, 122, 75, 0.1); color: #215438; }
+    .feedback.wrong { background: rgba(182, 58, 43, 0.1); color: #7d2419; }
+    .empty { padding: 40px 20px; text-align: center; color: var(--muted); }
+
+    @media (max-width: 920px) {
+      .hero,
+      .layout,
+      .grid { grid-template-columns: 1fr; }
+      .shell { width: min(100% - 20px, 1180px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-card">
+        <span class="eyebrow">Node.js + PostgreSQL + Vercel</span>
+        <h1>Banco de Questões com persistência real</h1>
+        <p>As questões são carregadas pela API serverless em <code>/api/questoes</code> e ficam salvas no PostgreSQL via <code>DATABASE_URL</code>.</p>
+      </div>
+      <aside class="stats-card">
+        <div class="metric"><span>Total no banco</span><strong id="metric-total">0</strong></div>
+        <div class="metric"><span>Respondidas</span><strong id="metric-answered">0</strong></div>
+        <div class="metric"><span>Acertos</span><strong id="metric-correct">0</strong></div>
+        <div class="metric"><span>Taxa</span><strong id="metric-rate">0%</strong></div>
+      </aside>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <h2>Nova questão</h2>
+        <form id="questao-form">
+          <input type="hidden" id="questao-id">
+          <div class="grid">
+            <label>Disciplina<input id="disciplina" name="disciplina" required></label>
+            <label>Assunto<input id="assunto" name="assunto" required></label>
+            <label>Dificuldade
+              <select id="dificuldade" name="dificuldade" required>
+                <option value="Fácil">Fácil</option>
+                <option value="Médio">Médio</option>
+                <option value="Difícil">Difícil</option>
+              </select>
+            </label>
+            <label>Gabarito
+              <select id="gabarito" name="gabarito" required>
+                <option value="C">Certo</option>
+                <option value="E">Errado</option>
+              </select>
+            </label>
+          </div>
+          <label>Enunciado<textarea id="enunciado" name="enunciado" required></textarea></label>
+          <label>Justificativa<textarea id="justificativa" name="justificativa"></textarea></label>
+          <label>Fonte<input id="fonte" name="fonte" placeholder="Ex.: Aula 03, p. 14"></label>
+          <div class="actions">
+            <button class="primary" type="submit" id="submit-button">Salvar questão</button>
+            <button class="secondary" type="button" id="cancel-edit" hidden>Cancelar edição</button>
+          </div>
+          <div class="status" id="form-status"></div>
+        </form>
+
+        <h2 style="margin-top: 28px;">Filtros</h2>
+        <div class="filters">
+          <label>Disciplina<select id="filter-disciplina"><option value="">Todas</option></select></label>
+          <label>Assunto<select id="filter-assunto"><option value="">Todos</option></select></label>
+          <label>Dificuldade
+            <select id="filter-dificuldade">
+              <option value="">Todas</option>
+              <option value="Fácil">Fácil</option>
+              <option value="Médio">Médio</option>
+              <option value="Difícil">Difícil</option>
+            </select>
+          </label>
+          <label>Status
+            <select id="filter-status">
+              <option value="">Todos</option>
+              <option value="pendente">Não respondidas</option>
+              <option value="correta">Acertei</option>
+              <option value="errada">Errei</option>
+            </select>
+          </label>
+        </div>
+        <div class="toolbar" style="margin-top: 14px;">
+          <button class="secondary" type="button" id="refresh-button">Atualizar lista</button>
+          <button class="secondary" type="button" id="reset-progress">Limpar respostas</button>
+        </div>
+      </aside>
+
+      <main class="panel">
+        <div class="toolbar" style="justify-content: space-between; margin-bottom: 16px;">
+          <div class="subtle">Questões persistidas no PostgreSQL e carregadas em tempo real.</div>
+          <div class="subtle" id="list-count">0 itens</div>
+        </div>
+        <div class="list" id="questoes-list"></div>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      questoes: [],
+      answers: loadAnswers()
+    };
+
+    const form = document.getElementById('questao-form');
+    const formStatus = document.getElementById('form-status');
+    const submitButton = document.getElementById('submit-button');
+    const cancelEditButton = document.getElementById('cancel-edit');
+    const listElement = document.getElementById('questoes-list');
+
+    document.getElementById('refresh-button').addEventListener('click', () => loadQuestoes());
+    document.getElementById('reset-progress').addEventListener('click', resetAnswers);
+    cancelEditButton.addEventListener('click', resetForm);
+    form.addEventListener('submit', handleSubmit);
+
+    ['filter-disciplina', 'filter-assunto', 'filter-dificuldade', 'filter-status'].forEach((id) => {
+      document.getElementById(id).addEventListener('change', render);
+    });
+
+    loadQuestoes();
+
+    async function loadQuestoes() {
+      setStatus('Carregando questões...');
+      try {
+        const response = await fetch('/api/questoes');
+        if (!response.ok) {
+          throw new Error('Falha ao carregar questões.');
+        }
+
+        state.questoes = await response.json();
+        hydrateFilters();
+        render();
+        setStatus('Dados sincronizados com sucesso.');
+      } catch (error) {
+        console.error(error);
+        setStatus('Não foi possível carregar as questões agora.');
+      }
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+
+      const payload = {
+        disciplina: form.disciplina.value.trim(),
+        assunto: form.assunto.value.trim(),
+        dificuldade: form.dificuldade.value,
+        enunciado: form.enunciado.value.trim(),
+        gabarito: form.gabarito.value,
+        justificativa: form.justificativa.value.trim(),
+        fonte: form.fonte.value.trim()
+      };
+
+      const editingId = document.getElementById('questao-id').value;
+      const method = editingId ? 'PUT' : 'POST';
+      const endpoint = editingId ? `/api/questoes?id=${editingId}` : '/api/questoes';
+
+      submitButton.disabled = true;
+      setStatus(editingId ? 'Atualizando questão...' : 'Salvando questão...');
+
+      try {
+        const response = await fetch(endpoint, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = response.status === 204 ? null : await response.json();
+        if (!response.ok) {
+          throw new Error(data?.error || 'Falha ao salvar questão.');
+        }
+
+        resetForm();
+        await loadQuestoes();
+      } catch (error) {
+        console.error(error);
+        setStatus(error.message);
+      } finally {
+        submitButton.disabled = false;
+      }
+    }
+
+    async function deleteQuestao(id) {
+      if (!confirm('Deseja excluir esta questão?')) {
+        return;
+      }
+
+      setStatus('Excluindo questão...');
+      try {
+        const response = await fetch(`/api/questoes?id=${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data?.error || 'Falha ao excluir.');
+        }
+        delete state.answers[id];
+        persistAnswers();
+        await loadQuestoes();
+      } catch (error) {
+        console.error(error);
+        setStatus(error.message);
+      }
+    }
+
+    function editQuestao(id) {
+      const questao = state.questoes.find((item) => item.id === id);
+      if (!questao) {
+        return;
+      }
+
+      document.getElementById('questao-id').value = questao.id;
+      form.disciplina.value = questao.disciplina;
+      form.assunto.value = questao.assunto;
+      form.dificuldade.value = questao.dificuldade;
+      form.enunciado.value = questao.enunciado;
+      form.gabarito.value = questao.gabarito;
+      form.justificativa.value = questao.justificativa || '';
+      form.fonte.value = questao.fonte || '';
+      submitButton.textContent = 'Atualizar questão';
+      cancelEditButton.hidden = false;
+      setStatus(`Editando a questão #${id}.`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      form.reset();
+      document.getElementById('questao-id').value = '';
+      form.dificuldade.value = 'Fácil';
+      form.gabarito.value = 'C';
+      submitButton.textContent = 'Salvar questão';
+      cancelEditButton.hidden = true;
+      setStatus('');
+    }
+
+    function answerQuestion(id, escolha) {
+      const questao = state.questoes.find((item) => item.id === id);
+      if (!questao) {
+        return;
+      }
+
+      state.answers[id] = {
+        escolha,
+        correto: questao.gabarito === escolha
+      };
+
+      persistAnswers();
+      render();
+    }
+
+    function resetAnswers() {
+      state.answers = {};
+      persistAnswers();
+      render();
+      setStatus('Progresso local removido.');
+    }
+
+    function hydrateFilters() {
+      updateSelect('filter-disciplina', uniqueValues('disciplina'), 'Todas');
+      updateSelect('filter-assunto', uniqueValues('assunto'), 'Todos');
+    }
+
+    function uniqueValues(field) {
+      return [...new Set(state.questoes.map((item) => item[field]).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    }
+
+    function updateSelect(id, values, emptyLabel) {
+      const select = document.getElementById(id);
+      const currentValue = select.value;
+      select.innerHTML = `<option value="">${emptyLabel}</option>`;
+      values.forEach((value) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+      select.value = values.includes(currentValue) ? currentValue : '';
+    }
+
+    function getFilteredQuestoes() {
+      const disciplina = document.getElementById('filter-disciplina').value;
+      const assunto = document.getElementById('filter-assunto').value;
+      const dificuldade = document.getElementById('filter-dificuldade').value;
+      const status = document.getElementById('filter-status').value;
+
+      return state.questoes.filter((questao) => {
+        if (disciplina && questao.disciplina !== disciplina) return false;
+        if (assunto && questao.assunto !== assunto) return false;
+        if (dificuldade && questao.dificuldade !== dificuldade) return false;
+
+        const answer = state.answers[questao.id];
+        if (status === 'pendente' && answer) return false;
+        if (status === 'correta' && !answer?.correto) return false;
+        if (status === 'errada' && (!answer || answer.correto)) return false;
+        return true;
+      });
+    }
+
+    function render() {
+      const filtered = getFilteredQuestoes();
+      document.getElementById('list-count').textContent = `${filtered.length} itens`;
+
+      if (filtered.length === 0) {
+        listElement.innerHTML = '<div class="empty">Nenhuma questão encontrada para os filtros atuais.</div>';
+      } else {
+        listElement.innerHTML = filtered.map(renderCard).join('');
+      }
+
+      bindCardActions();
+      updateMetrics();
+    }
+
+    function renderCard(questao) {
+      const answer = state.answers[questao.id];
+      const feedbackClass = answer && !answer.correto ? 'feedback wrong' : 'feedback';
+      const feedback = answer
+        ? `<div class="${feedbackClass}"><strong>Gabarito: ${questao.gabarito === 'C' ? 'Certo' : 'Errado'}</strong><div>${questao.justificativa || 'Sem justificativa cadastrada.'}</div></div>`
+        : '';
+
+      return `
+        <article class="question-card">
+          <div class="question-top">
+            <div>
+              <div class="tags">
+                <span class="tag">${escapeHtml(questao.disciplina)}</span>
+                <span class="tag">${escapeHtml(questao.assunto)}</span>
+                <span class="tag">${escapeHtml(questao.dificuldade)}</span>
+              </div>
+              <h3>Questão #${questao.id}</h3>
+            </div>
+            <div class="question-actions">
+              <button class="secondary" data-edit="${questao.id}">Editar</button>
+              <button class="danger" data-delete="${questao.id}">Excluir</button>
+            </div>
+          </div>
+          <p>${escapeHtml(questao.enunciado)}</p>
+          ${questao.fonte ? `<p class="subtle"><strong>Fonte:</strong> ${escapeHtml(questao.fonte)}</p>` : ''}
+          <div class="answer-actions" style="margin-top: 14px;">
+            <button class="answer" data-answer="${questao.id}" data-value="C">Marcar Certo</button>
+            <button class="answer" data-answer="${questao.id}" data-value="E">Marcar Errado</button>
+          </div>
+          ${feedback}
+        </article>
+      `;
+    }
+
+    function bindCardActions() {
+      document.querySelectorAll('[data-edit]').forEach((button) => {
+        button.addEventListener('click', () => editQuestao(Number(button.dataset.edit)));
+      });
+
+      document.querySelectorAll('[data-delete]').forEach((button) => {
+        button.addEventListener('click', () => deleteQuestao(Number(button.dataset.delete)));
+      });
+
+      document.querySelectorAll('[data-answer]').forEach((button) => {
+        button.addEventListener('click', () => answerQuestion(Number(button.dataset.answer), button.dataset.value));
+      });
+    }
+
+    function updateMetrics() {
+      const answered = Object.values(state.answers).filter(Boolean);
+      const correct = answered.filter((item) => item.correto).length;
+      const rate = answered.length ? Math.round((correct / answered.length) * 100) : 0;
+
+      document.getElementById('metric-total').textContent = state.questoes.length;
+      document.getElementById('metric-answered').textContent = answered.length;
+      document.getElementById('metric-correct').textContent = correct;
+      document.getElementById('metric-rate').textContent = `${rate}%`;
+    }
+
+    function setStatus(message) {
+      formStatus.textContent = message;
+    }
+
+    function persistAnswers() {
+      localStorage.setItem('bancoQuestoes.answers', JSON.stringify(state.answers));
+    }
+
+    function loadAnswers() {
+      try {
+        return JSON.parse(localStorage.getItem('bancoQuestoes.answers')) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+  </script>
+</body>
+</html>

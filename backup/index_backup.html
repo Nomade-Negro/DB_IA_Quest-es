@@ -6,12 +6,8 @@
   <title>Banco de Questões IA — Concursos</title>
   
    <!-- FAVICON -->
-  <link rel="icon" type="image/x-icon" href="favicon_io (1)/favicon.ico">
-  <link rel="shortcut icon" href="favicon_io (1)/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io (1)/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io (1)/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io (1)/favicon-16x16.png">
-  <link rel="manifest" href="favicon_io (1)/site.webmanifest">
+  <link rel="icon" href="/favicon.ico?v=1">
+  <link rel="shortcut icon" href="/favicon.ico?v=1">
   
   <style>
     /* ============================================================
@@ -438,53 +434,128 @@
 ╚══════════════════════════════════════════════════════════════════╝
 */
 
-const QUESTOES = [];
+const QUESTOES = [
 
-// ── CARREGAR QUESTÕES DA API ──
-let isLoading = false;
+  // ──────────────────────────────────────────────
+  // LÍNGUA PORTUGUESA — SUBSTANTIVOS
+  // ──────────────────────────────────────────────
 
-async function loadQuestoes() {
-  if (isLoading) return;
-  
-  isLoading = true;
-  showLoading(true);
-  
-  try {
-    const response = await fetch('/api/questoes');
-    if (!response.ok) {
-      throw new Error(`Erro HTTP: ${response.status}`);
-    }
-    QUESTOES.length = 0; // Limpar array
-    const data = await response.json();
-    QUESTOES.push(...data);
-    
-    // Popular filtros e renderizar
-    populateFilters();
-    renderQuestions();
-  } catch (error) {
-    console.error('Erro ao carregar questões:', error);
-    showError('Erro ao carregar questões. Tente novamente.');
-  } finally {
-    isLoading = false;
-    showLoading(false);
-  }
-}
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Substantivos: classificação (próprio x comum)",
+    dificuldade:   "Fácil",
+    enunciado:     "Os vocábulos Chapecó, Irene e Brasil são substantivos próprios.",
+    gabarito:      "C",
+    justificativa: "Chapecó (cidade), Irene (nome próprio) e Brasil (país) são todos substantivos próprios, pois nomeiam seres de maneira específica e individual.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 9"
+  },
 
-function showLoading(show) {
-  const container = document.getElementById("questionsContainer");
-  const emptyState = document.getElementById("emptyState");
-  
-  if (show) {
-    container.innerHTML = '<div style="text-align: center; padding: 40px;"><div>Carregando questões...</div></div>';
-    emptyState.style.display = "none";
-  }
-}
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Substantivos: concreto x abstrato",
+    dificuldade:   "Médio",
+    enunciado:     "Na frase \"A construção das Pirâmides do Egito deve ter sido demorada\", a palavra \"construção\" é classificada como substantivo concreto, por designar uma obra física.",
+    gabarito:      "E",
+    justificativa: "\"Construção\" é substantivo abstrato, pois denota ação/resultado de construir (processo), e não um ser com existência independente.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 8"
+  },
 
-function showError(message) {
-  const container = document.getElementById("questionsContainer");
-  container.innerHTML = `<div style="text-align: center; padding: 40px; color: #c62828;"><div>❌ ${message}</div><button onclick="loadQuestoes()" style="margin-top: 10px; padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">Tentar Novamente</button></div>`;
-}
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Substantivos: classificação (coletivo)",
+    dificuldade:   "Médio",
+    enunciado:     "O substantivo \"papanapá\" é um coletivo que designa um agrupamento de borboletas.",
+    gabarito:      "C",
+    justificativa: "Papanapá é, de fato, o substantivo coletivo referente a um grupo de borboletas.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 7"
+  },
 
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Flexão de número: compostos",
+    dificuldade:   "Médio",
+    enunciado:     "De acordo com a regra \"quem varia varia, quem não varia não varia\", o plural do substantivo composto abaixo‑assinado é abaixo‑assinados, porque o primeiro elemento é invariável e o segundo, adjetivo, varia.",
+    gabarito:      "C",
+    justificativa: "\"Abaixo\" é advérbio (invariável) e \"assinado\" funciona como adjetivo (varia). Logo, o plural correto é abaixo-assinados.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 17"
+  },
+
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Flexão de número: compostos",
+    dificuldade:   "Médio",
+    enunciado:     "O plural de guarda‑civil é guarda‑civis, pois o primeiro termo é um verbo e o segundo um substantivo, e, nessa estrutura, apenas o segundo termo varia.",
+    gabarito:      "E",
+    justificativa: "Guarda-civil é formado por substantivo + adjetivo (não verbo + substantivo). O plural correto é guardas-civis, com ambos os termos variando.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 20"
+  },
+
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Flexão de número: terminados em -ão",
+    dificuldade:   "Médio",
+    enunciado:     "O substantivo \"cidadão\" admite, na língua culta, apenas o plural \"cidadãos\", não sendo aceitas as formas \"cidadães\" nem \"cidadões\".",
+    gabarito:      "C",
+    justificativa: "O plural de cidadão é exclusivamente cidadãos. As formas cidadães e cidadões não são aceitas pela norma culta.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 25"
+  },
+
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Flexão de número: compostos com preposição",
+    dificuldade:   "Médio",
+    enunciado:     "Os substantivos compostos ligados por preposição, como \"pé de moleque\" e \"mula sem cabeça\", são invariáveis no plural, permanecendo apenas o primeiro elemento no singular.",
+    gabarito:      "E",
+    justificativa: "Nesses compostos, normalmente apenas o primeiro elemento vai para o plural: pés de moleque, mulas sem cabeça. Não são invariáveis — o primeiro termo varia.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 19"
+  },
+
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Flexão de gênero: substantivos uniformes",
+    dificuldade:   "Médio",
+    enunciado:     "Os substantivos epicenos, como \"a águia\", apresentam uma única forma para os dois gêneros, sendo a distinção de sexo feita pelas palavras macho e fêmea.",
+    gabarito:      "C",
+    justificativa: "Substantivos epicenos possuem apenas um gênero gramatical e a distinção sexual é feita com os termos \"macho\" e \"fêmea\" (ex.: a águia macho, a águia fêmea).",
+    fonte:         "Aula 02_005_Slide.pdf, p. 30"
+  },
+
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Grau do substantivo: valor semântico",
+    dificuldade:   "Médio",
+    enunciado:     "O diminutivo, além da ideia de tamanho reduzido, pode expressar afetividade (como em \"coraçãozinho\") ou ironia (como em \"sabichão\"), mas nunca pode indicar depreciação.",
+    gabarito:      "E",
+    justificativa: "O diminutivo pode, sim, indicar depreciação. Exemplos: casebre, gentalha, povinho. Além disso, \"sabichão\" é aumentativo, não diminutivo.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 33 e p. 36"
+  },
+
+  {
+    disciplina:    "Língua Portuguesa",
+    assunto:       "Flexão de número: diminutivos",
+    dificuldade:   "Difícil",
+    enunciado:     "No plural dos substantivos diminutivos, o sufixo diminutivo e o radical comportam‑se como uma só palavra, de modo que a terminação de plural incide sobre o final do diminutivo, como em \"papeizinhos\" (plural de \"papelzinho\").",
+    gabarito:      "C",
+    justificativa: "A regra é: coloca-se o substantivo no plural, retira-se o -s, acrescenta-se o sufixo diminutivo + s. Papéis → papei + zinhos → papeizinhos.",
+    fonte:         "Aula 02_005_Slide.pdf, p. 34"
+  },
+
+  // ──────────────────────────────────────────────
+  // ✅ ADICIONE NOVAS QUESTÕES AQUI (antes do ];)
+  // ──────────────────────────────────────────────
+  // Copie o modelo do cabeçalho e cole aqui.
+  // Exemplo:
+  // {
+  //   disciplina:    "Direito Penal",
+  //   assunto:       "Crimes contra a pessoa",
+  //   dificuldade:   "Difícil",
+  //   enunciado:     "O homicídio culposo...",
+  //   gabarito:      "E",
+  //   justificativa: "Porque...",
+  //   fonte:         "CP, art. 121"
+  // },
+
+];
 // ═══ FIM DO BANCO DE QUESTÕES ═══
 
 
@@ -493,13 +564,14 @@ function showError(message) {
 // (a menos que queira personalizar funcionalidades)
 // ═══════════════════════════════════════════════
 
-let currentOrder = []; // IDs na ordem atual
-let answers = {};      // { id: { escolha: "C"|"E", correto: bool } }
+let currentOrder = []; // índices na ordem atual
+let answers = {};      // { idx: { escolha: "C"|"E", correto: bool } }
 let shuffled = false;
 
 // ── INICIALIZAÇÃO ──
 document.addEventListener("DOMContentLoaded", () => {
-  loadQuestoes();
+  populateFilters();
+  renderQuestions();
 });
 
 function populateFilters() {
@@ -530,36 +602,36 @@ function populateFilters() {
 }
 
 // ── FILTRAR QUESTÕES ──
-function getFilteredIds() {
+function getFilteredIndices() {
   const disc = document.getElementById("filtDisciplina").value;
   const ass  = document.getElementById("filtAssunto").value;
   const dif  = document.getElementById("filtDificuldade").value;
   const fnt  = document.getElementById("filtFonte").value;
   const sta  = document.getElementById("filtStatus").value;
 
-  let ids = [];
-  QUESTOES.forEach((q) => {
+  let indices = [];
+  QUESTOES.forEach((q, i) => {
     if (disc && q.disciplina !== disc) return;
     if (ass && q.assunto !== ass) return;
     if (dif && q.dificuldade !== dif) return;
     if (fnt && q.fonte !== fnt) return;
-    if (sta === "pendente" && answers[q.id]) return;
-    if (sta === "correta" && (!answers[q.id] || !answers[q.id].correto)) return;
-    if (sta === "errada" && (!answers[q.id] || answers[q.id].correto)) return;
-    ids.push(q.id);
+    if (sta === "pendente" && answers[i]) return;
+    if (sta === "correta" && (!answers[i] || !answers[i].correto)) return;
+    if (sta === "errada" && (!answers[i] || answers[i].correto)) return;
+    indices.push(i);
   });
-  return ids;
+  return indices;
 }
 
 // ── RENDERIZAR QUESTÕES ──
 function renderQuestions() {
   shuffled = false;
-  currentOrder = getFilteredIds();
+  currentOrder = getFilteredIndices();
   render(currentOrder);
 }
 
 function shuffleAndRender() {
-  currentOrder = getFilteredIds();
+  currentOrder = getFilteredIndices();
   // Fisher-Yates shuffle
   for (let i = currentOrder.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -569,14 +641,14 @@ function shuffleAndRender() {
   render(currentOrder);
 }
 
-function render(ids) {
+function render(indices) {
   const container = document.getElementById("questionsContainer");
   const emptyState = document.getElementById("emptyState");
 
-  document.getElementById("showCount").textContent = ids.length;
+  document.getElementById("showCount").textContent = indices.length;
   document.getElementById("totalCount").textContent = QUESTOES.length;
 
-  if (ids.length === 0) {
+  if (indices.length === 0) {
     container.innerHTML = "";
     emptyState.style.display = "block";
     return;
@@ -584,12 +656,10 @@ function render(ids) {
   emptyState.style.display = "none";
 
   let html = "";
-  ids.forEach((id, displayNum) => {
-    const q = QUESTOES.find(q => q.id === id);
-    if (!q) return; // Questão não encontrada
-    
+  indices.forEach((idx, displayNum) => {
+    const q = QUESTOES[idx];
     const num = displayNum + 1;
-    const ans = answers[id];
+    const ans = answers[idx];
     const cardClass = ans ? (ans.correto ? "answered-correct" : "answered-wrong") : "";
     const disabled = ans ? "disabled" : "";
 
@@ -627,7 +697,7 @@ function render(ids) {
     }
 
     html += `
-      <div class="question-card ${cardClass}" id="card-${id}">
+      <div class="question-card ${cardClass}" id="card-${idx}">
         <div class="q-header">
           <span class="q-num">Questão ${num}</span>
           <div class="q-tags">
@@ -643,9 +713,9 @@ function render(ids) {
         </div>
         <div class="q-footer">
           <button class="btn-answer ${btnCClass}" ${disabled}
-                  onclick="answer(${id}, 'C', this)">✅ CERTO</button>
+                  onclick="answer(${idx}, 'C', this)">✅ CERTO</button>
           <button class="btn-answer ${btnEClass}" ${disabled}
-                  onclick="answer(${id}, 'E', this)">❌ ERRADO</button>
+                  onclick="answer(${idx}, 'E', this)">❌ ERRADO</button>
           ${feedbackHTML}
         </div>
       </div>
@@ -657,12 +727,10 @@ function render(ids) {
 }
 
 // ── RESPONDER ──
-function answer(id, escolha, btnEl) {
-  const q = QUESTOES.find(q => q.id === id);
-  if (!q) return;
-  
+function answer(idx, escolha, btnEl) {
+  const q = QUESTOES[idx];
   const correto = (escolha === q.gabarito);
-  answers[id] = { escolha, correto };
+  answers[idx] = { escolha, correto };
 
   // Save to localStorage
   saveProgress();
@@ -672,16 +740,16 @@ function answer(id, escolha, btnEl) {
 
   // Scroll to the card
   setTimeout(() => {
-    const card = document.getElementById("card-" + id);
+    const card = document.getElementById("card-" + idx);
     if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
   }, 100);
 }
 
 // ── REVELAR TODOS ──
 function revealAll() {
-  currentOrder.forEach(id => {
-    if (!answers[id]) {
-      answers[id] = { escolha: null, correto: false, revealed: true };
+  currentOrder.forEach(idx => {
+    if (!answers[idx]) {
+      answers[idx] = { escolha: null, correto: false, revealed: true };
     }
   });
   saveProgress();
