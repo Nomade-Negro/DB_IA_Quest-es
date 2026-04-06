@@ -108,6 +108,8 @@
     .btn-danger { background: var(--red); color: #fff; }
     .btn-danger:hover { background: #d32f2f; }
     .btn-sm { padding: 7px 12px; font-size: 0.76rem; }
+    .btn-inline-danger { background: var(--red-bg); color: var(--red); border: 1px solid #ef9a9a; }
+    .btn-inline-danger:hover { background: #ffcdd2; }
 
     .hint-box, .summary-box, .feedback-box {
       margin: 20px 16px 0; padding: 16px;
@@ -539,6 +541,35 @@ async function parseApiResponse(response) {
   throw error;
 }
 
+async function deleteQuestion(id) {
+  if (!Number.isInteger(id) || id <= 0) {
+    alert('ID inválido para exclusão.');
+    return;
+  }
+
+  if (!confirm('Deseja realmente excluir esta questão?')) return;
+
+  try {
+    const response = await fetch(`/api/questions/${id}`, {
+      method: 'DELETE'
+    });
+
+    const data = await parseApiResponse(response);
+    if (response.ok && data?.success) {
+      alert('Questão excluída com sucesso');
+      delete answers[id];
+      saveProgress();
+      await loadQuestoes();
+      return;
+    }
+
+    alert('Erro: Não foi possível excluir a questão.');
+  } catch (error) {
+    console.error('Erro ao excluir questão:', error);
+    alert('Erro: ' + (error?.payload?.error || error.message || 'Falha ao excluir a questão.'));
+  }
+}
+
 function resetFilterSelect(id, placeholder) {
   const select = document.getElementById(id);
   const currentValue = select.value;
@@ -694,6 +725,7 @@ function render(ids) {
         <div class="q-footer">
           <button class="btn-answer ${btnCClass.trim()}" ${disabled} onclick="answer(${id}, 'C')">✅ CERTO</button>
           <button class="btn-answer ${btnEClass.trim()}" ${disabled} onclick="answer(${id}, 'E')">❌ ERRADO</button>
+          <button class="btn btn-sm btn-inline-danger" onclick="deleteQuestion(${id})">Excluir</button>
           ${feedbackHTML}
         </div>
       </div>
